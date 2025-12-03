@@ -1,4 +1,4 @@
----
+```bash
 UIII_Gym_0459/
 ├── .venv/                              <-- Entorno Virtual
 ├── backend_gimnasio07/                 <-- Configuración del Proyecto
@@ -58,7 +58,7 @@ UIII_Gym_0459/
 │   └── views.py                        <-- Lógica (Funciones CRUD)
 ├── db.sqlite3                          <-- Base de datos (se crea al migrar)
 └── manage.py                           <-- Ejecutor de comandos
----
+```
 
 Aquí tienes la guía completa paso a paso para desarrollar el proyecto **Gym Flame** con Django, siguiendo estrictamente tus requerimientos, estructura de carpetas y lógica sin formularios de Django (`forms.py`).
 
