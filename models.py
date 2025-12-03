@@ -1,4 +1,3 @@
-```bash
 from django.db import models
 
 class Membresia(models.Model):
@@ -137,4 +136,3 @@ class RutinaPersonalizada(models.Model):
     class Meta:
         verbose_name = "Rutina Personalizada"
         verbose_name_plural = "Rutinas Personalizadas"
-```
