@@ -1,11 +1,10 @@
-Aquí tienes el código necesario para tu archivo `models.py` en Django.
 
 He realizado las siguientes adaptaciones para seguir las buenas prácticas de Django:
 1.  **Foreign Keys**: Los campos como `id_socio`, `id_entrenador`, etc., se han convertido en relaciones `ForeignKey`.
 2.  **Opciones**: He añadido opciones (`choices`) para campos como género y estado, lo cual mejora la interfaz de administración.
 3.  **Fechas y Nulos**: Campos como `fecha_cancelacion` permiten valores nulos (`null=True, blank=True`), ya que no siempre tendrán una fecha al momento de crear el registro.
 
-```python
+```bash
 from django.db import models
 
 class Membresia(models.Model):
