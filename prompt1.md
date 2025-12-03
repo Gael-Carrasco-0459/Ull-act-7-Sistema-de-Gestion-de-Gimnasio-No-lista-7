@@ -1,14 +1,64 @@
-UIII_Delrio_0459/
-├── app_Delrio/
-│   ├── templates/
-│   │   ├── Ventas/  <-- ¡Esta es la nueva carpeta!
-│   │   │   ├── agregar_venta.html
-│   │   │   ├── actualizar_venta.html
-│   │   │   ├── borrar_venta.html
-│   │   │   └── ver_venta.html
-│   │   ├── base.html
-│   │   ├── ...
-
+---
+UIII_Gym_0459/
+├── .venv/                              <-- Entorno Virtual
+├── backend_gimnasio07/                 <-- Configuración del Proyecto
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py                     <-- Aquí registraste 'members'
+│   ├── urls.py                         <-- Aquí incluiste members.urls
+│   └── wsgi.py
+├── members/                            <-- Tu Aplicación
+│   ├── migrations/                     <-- Archivos de migraciones de la BD
+│   ├── templates/                      <-- Carpeta principal de HTMLs
+│   │   ├── clase/
+│   │   │   ├── actualizar_clase.html
+│   │   │   ├── agregar_clase.html
+│   │   │   ├── borrar_clase.html
+│   │   │   └── ver_clases.html
+│   │   ├── entrenador/
+│   │   │   ├── actualizar_entrenador.html
+│   │   │   ├── agregar_entrenador.html
+│   │   │   ├── borrar_entrenador.html
+│   │   │   └── ver_entrenadores.html
+│   │   ├── membresia/
+│   │   │   ├── actualizar_membresia.html
+│   │   │   ├── agregar_membresia.html
+│   │   │   ├── borrar_membresia.html
+│   │   │   └── ver_membresias.html
+│   │   ├── pago/
+│   │   │   ├── actualizar_pago.html
+│   │   │   ├── agregar_pago.html
+│   │   │   ├── borrar_pago.html
+│   │   │   └── ver_pagos.html
+│   │   ├── reserva_clase/
+│   │   │   ├── actualizar_reserva_clase.html
+│   │   │   ├── agregar_reserva_clase.html
+│   │   │   ├── borrar_reserva_clase.html
+│   │   │   └── ver_reservas_clase.html
+│   │   ├── rutina_personalizada/
+│   │   │   ├── actualizar_rutina_personalizada.html
+│   │   │   ├── agregar_rutina_personalizada.html
+│   │   │   ├── borrar_rutina_personalizada.html
+│   │   │   └── ver_rutinas_personalizadas.html
+│   │   ├── socio/
+│   │   │   ├── actualizar_socio.html
+│   │   │   ├── agregar_socio.html
+│   │   │   ├── borrar_socio.html
+│   │   │   └── ver_socios.html
+│   │   ├── base.html                   <-- Plantilla madre
+│   │   ├── footer.html                 <-- Pie de página
+│   │   ├── header.html                 <-- Encabezado (Logo/Título)
+│   │   ├── inicio.html                 <-- Página de Bienvenida
+│   │   └── navbar.html                 <-- Menú de navegación
+│   ├── __init__.py
+│   ├── admin.py                        <-- Registro de modelos en panel admin
+│   ├── apps.py
+│   ├── models.py                       <-- Definición de las 7 tablas
+│   ├── urls.py                         <-- Rutas de la app members
+│   └── views.py                        <-- Lógica (Funciones CRUD)
+├── db.sqlite3                          <-- Base de datos (se crea al migrar)
+└── manage.py                           <-- Ejecutor de comandos
+---
 
 Aquí tienes la guía completa paso a paso para desarrollar el proyecto **Gym Flame** con Django, siguiendo estrictamente tus requerimientos, estructura de carpetas y lógica sin formularios de Django (`forms.py`).
 
