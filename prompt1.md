@@ -853,12 +853,680 @@ Es similar a agregar, pero con `value="{{ membresia.campo }}"` y apuntando a la 
 {% endblock %}
 ```
 
-**33-61. Resto de modelos (Entrenador, Clase, etc.):**
-Para completar el proyecto (pasos 33 en adelante), debes:
-1.  Copiar la carpeta `templates/membresia` y renombrarla (ej. `entrenador`).
-2.  Renombrar los archivos (ej. `agregar_entrenador.html`).
-3.  Cambiar los nombres de los campos `<input name="...">` para que coincidan con los de `models.py`.
-4.  Si hay llaves foráneas (como en `Clase` que tiene `entrenador`), usar el ejemplo de `<select>` de Socio.
+Claro que sí. Aquí tienes **todos los pasos restantes** detallados (del 33 al 61) para completar los módulos de Entrenador, Clase, Reserva de Clase, Pago y Rutina Personalizada.
+
+---
+
+### Paso 1: Completar `members/urls.py` (Pasos 36, 41, 47, 53, 59)
+
+Abre el archivo `members/urls.py` y asegúrate de que tenga **todas** estas rutas. Copia y pega para reemplazar o completar lo que tenías:
+
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.inicio_gimnasio, name='inicio'),
+
+    # --- MEMBRESIA ---
+    path('membresia/agregar/', views.agregar_membresia, name='agregar_membresia'),
+    path('membresia/ver/', views.ver_membresias, name='ver_membresias'),
+    path('membresia/actualizar/<int:id>/', views.actualizar_membresia, name='actualizar_membresia'),
+    path('membresia/actualizar/realizar/<int:id>/', views.realizar_actualizacion_membresia, name='realizar_actualizacion_membresia'),
+    path('membresia/borrar/<int:id>/', views.borrar_membresia, name='borrar_membresia'),
+
+    # --- SOCIO ---
+    path('socio/agregar/', views.agregar_socio, name='agregar_socio'),
+    path('socio/ver/', views.ver_socios, name='ver_socios'),
+    path('socio/actualizar/<int:id>/', views.actualizar_socio, name='actualizar_socio'),
+    path('socio/actualizar/realizar/<int:id>/', views.realizar_actualizacion_socio, name='realizar_actualizacion_socio'),
+    path('socio/borrar/<int:id>/', views.borrar_socio, name='borrar_socio'),
+
+    # --- ENTRENADOR ---
+    path('entrenador/agregar/', views.agregar_entrenador, name='agregar_entrenador'),
+    path('entrenador/ver/', views.ver_entrenadores, name='ver_entrenadores'),
+    path('entrenador/actualizar/<int:id>/', views.actualizar_entrenador, name='actualizar_entrenador'),
+    path('entrenador/actualizar/realizar/<int:id>/', views.realizar_actualizacion_entrenador, name='realizar_actualizacion_entrenador'),
+    path('entrenador/borrar/<int:id>/', views.borrar_entrenador, name='borrar_entrenador'),
+
+    # --- CLASE ---
+    path('clase/agregar/', views.agregar_clase, name='agregar_clase'),
+    path('clase/ver/', views.ver_clases, name='ver_clases'),
+    path('clase/actualizar/<int:id>/', views.actualizar_clase, name='actualizar_clase'),
+    path('clase/actualizar/realizar/<int:id>/', views.realizar_actualizacion_clase, name='realizar_actualizacion_clase'),
+    path('clase/borrar/<int:id>/', views.borrar_clase, name='borrar_clase'),
+
+    # --- RESERVA CLASE ---
+    path('reserva/agregar/', views.agregar_reserva_clase, name='agregar_reserva_clase'),
+    path('reserva/ver/', views.ver_reservas_clase, name='ver_reservas_clase'),
+    path('reserva/actualizar/<int:id>/', views.actualizar_reserva_clase, name='actualizar_reserva_clase'),
+    path('reserva/actualizar/realizar/<int:id>/', views.realizar_actualizacion_reserva_clase, name='realizar_actualizacion_reserva_clase'),
+    path('reserva/borrar/<int:id>/', views.borrar_reserva_clase, name='borrar_reserva_clase'),
+
+    # --- PAGO ---
+    path('pago/agregar/', views.agregar_pago, name='agregar_pago'),
+    path('pago/ver/', views.ver_pagos, name='ver_pagos'),
+    path('pago/actualizar/<int:id>/', views.actualizar_pago, name='actualizar_pago'),
+    path('pago/actualizar/realizar/<int:id>/', views.realizar_actualizacion_pago, name='realizar_actualizacion_pago'),
+    path('pago/borrar/<int:id>/', views.borrar_pago, name='borrar_pago'),
+
+    # --- RUTINA PERSONALIZADA ---
+    path('rutina/agregar/', views.agregar_rutina_personalizada, name='agregar_rutina_personalizada'),
+    path('rutina/ver/', views.ver_rutinas_personalizadas, name='ver_rutinas_personalizadas'),
+    path('rutina/actualizar/<int:id>/', views.actualizar_rutina_personalizada, name='actualizar_rutina_personalizada'),
+    path('rutina/actualizar/realizar/<int:id>/', views.realizar_actualizacion_rutina_personalizada, name='realizar_actualizacion_rutina_personalizada'),
+    path('rutina/borrar/<int:id>/', views.borrar_rutina_personalizada, name='borrar_rutina_personalizada'),
+]
+```
+
+---
+
+### Paso 2: Completar `members/views.py`
+
+Agrega el código faltante para los modelos restantes. Asegúrate de importar todos los modelos al inicio del archivo:
+
+```python
+# Asegúrate de tener esto al inicio
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Membresia, Socio, Entrenador, Clase, ReservaClase, Pago, RutinaPersonalizada
+
+# ... (Aquí va el código de Inicio, Membresia, Socio, Entrenador y Clase que te di antes) ...
+
+# --- RESERVA CLASE ---
+def agregar_reserva_clase(request):
+    socios = Socio.objects.all()
+    clases = Clase.objects.all()
+    if request.method == 'POST':
+        ReservaClase.objects.create(
+            socio_id=request.POST.get('socio'),
+            clase_id=request.POST.get('clase'),
+            estado_reserva=request.POST.get('estado_reserva'),
+            comentarios=request.POST.get('comentarios')
+        )
+        return redirect('ver_reservas_clase')
+    return render(request, 'reserva_clase/agregar_reserva_clase.html', {'socios': socios, 'clases': clases})
+
+def ver_reservas_clase(request):
+    reservas = ReservaClase.objects.all()
+    return render(request, 'reserva_clase/ver_reservas_clase.html', {'reservas': reservas})
+
+def actualizar_reserva_clase(request, id):
+    reserva = get_object_or_404(ReservaClase, id=id)
+    socios = Socio.objects.all()
+    clases = Clase.objects.all()
+    return render(request, 'reserva_clase/actualizar_reserva_clase.html', {'reserva': reserva, 'socios': socios, 'clases': clases})
+
+def realizar_actualizacion_reserva_clase(request, id):
+    if request.method == 'POST':
+        r = get_object_or_404(ReservaClase, id=id)
+        r.socio_id = request.POST.get('socio')
+        r.clase_id = request.POST.get('clase')
+        r.estado_reserva = request.POST.get('estado_reserva')
+        r.comentarios = request.POST.get('comentarios')
+        r.save()
+        return redirect('ver_reservas_clase')
+
+def borrar_reserva_clase(request, id):
+    get_object_or_404(ReservaClase, id=id).delete()
+    return redirect('ver_reservas_clase')
+
+# --- PAGO ---
+def agregar_pago(request):
+    socios = Socio.objects.all()
+    membresias = Membresia.objects.all()
+    if request.method == 'POST':
+        Pago.objects.create(
+            socio_id=request.POST.get('socio'),
+            monto=request.POST.get('monto'),
+            metodo_pago=request.POST.get('metodo_pago'),
+            concepto=request.POST.get('concepto'),
+            membresia_pagada_id=request.POST.get('membresia_pagada'),
+            estado_pago=request.POST.get('estado_pago')
+        )
+        return redirect('ver_pagos')
+    return render(request, 'pago/agregar_pago.html', {'socios': socios, 'membresias': membresias})
+
+def ver_pagos(request):
+    pagos = Pago.objects.all()
+    return render(request, 'pago/ver_pagos.html', {'pagos': pagos})
+
+def actualizar_pago(request, id):
+    pago = get_object_or_404(Pago, id=id)
+    socios = Socio.objects.all()
+    membresias = Membresia.objects.all()
+    return render(request, 'pago/actualizar_pago.html', {'pago': pago, 'socios': socios, 'membresias': membresias})
+
+def realizar_actualizacion_pago(request, id):
+    if request.method == 'POST':
+        p = get_object_or_404(Pago, id=id)
+        p.socio_id = request.POST.get('socio')
+        p.monto = request.POST.get('monto')
+        p.metodo_pago = request.POST.get('metodo_pago')
+        p.concepto = request.POST.get('concepto')
+        p.membresia_pagada_id = request.POST.get('membresia_pagada')
+        p.estado_pago = request.POST.get('estado_pago')
+        p.save()
+        return redirect('ver_pagos')
+
+def borrar_pago(request, id):
+    get_object_or_404(Pago, id=id).delete()
+    return redirect('ver_pagos')
+
+# --- RUTINA PERSONALIZADA ---
+def agregar_rutina_personalizada(request):
+    socios = Socio.objects.all()
+    entrenadores = Entrenador.objects.all()
+    if request.method == 'POST':
+        RutinaPersonalizada.objects.create(
+            socio_id=request.POST.get('socio'),
+            entrenador_id=request.POST.get('entrenador'),
+            objetivo=request.POST.get('objetivo'),
+            descripcion_ejercicios=request.POST.get('descripcion_ejercicios'),
+            frecuencia=request.POST.get('frecuencia'),
+            duracion_semanas=request.POST.get('duracion_semanas')
+        )
+        return redirect('ver_rutinas_personalizadas')
+    return render(request, 'rutina_personalizada/agregar_rutina_personalizada.html', {'socios': socios, 'entrenadores': entrenadores})
+
+def ver_rutinas_personalizadas(request):
+    rutinas = RutinaPersonalizada.objects.all()
+    return render(request, 'rutina_personalizada/ver_rutinas_personalizadas.html', {'rutinas': rutinas})
+
+def actualizar_rutina_personalizada(request, id):
+    rutina = get_object_or_404(RutinaPersonalizada, id=id)
+    socios = Socio.objects.all()
+    entrenadores = Entrenador.objects.all()
+    return render(request, 'rutina_personalizada/actualizar_rutina_personalizada.html', {'rutina': rutina, 'socios': socios, 'entrenadores': entrenadores})
+
+def realizar_actualizacion_rutina_personalizada(request, id):
+    if request.method == 'POST':
+        r = get_object_or_404(RutinaPersonalizada, id=id)
+        r.socio_id = request.POST.get('socio')
+        r.entrenador_id = request.POST.get('entrenador')
+        r.objetivo = request.POST.get('objetivo')
+        r.descripcion_ejercicios = request.POST.get('descripcion_ejercicios')
+        r.frecuencia = request.POST.get('frecuencia')
+        r.duracion_semanas = request.POST.get('duracion_semanas')
+        r.save()
+        return redirect('ver_rutinas_personalizadas')
+
+def borrar_rutina_personalizada(request, id):
+    get_object_or_404(RutinaPersonalizada, id=id).delete()
+    return redirect('ver_rutinas_personalizadas')
+```
+
+---
+
+### Paso 3: Templates restantes (HTML)
+
+Crea las carpetas y archivos indicados a continuación.
+
+#### 3.1 Entrenador (Pasos 33, 34)
+Carpeta: `members/templates/entrenador/`
+
+**agregar_entrenador.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+    <h3>Agregar Entrenador</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3"><label>Nombre:</label><input type="text" name="nombre" class="form-control" required></div>
+        <div class="mb-3"><label>Apellido:</label><input type="text" name="apellido" class="form-control" required></div>
+        <div class="mb-3"><label>Especialidad:</label><input type="text" name="especialidad" class="form-control" required></div>
+        <div class="mb-3"><label>Teléfono:</label><input type="text" name="telefono" class="form-control" required></div>
+        <div class="mb-3"><label>Email:</label><input type="email" name="email" class="form-control" required></div>
+        <div class="mb-3"><label>Fecha Contratación:</label><input type="date" name="fecha_contratacion" class="form-control" required></div>
+        <div class="mb-3"><label>Salario:</label><input type="number" step="0.01" name="salario" class="form-control" required></div>
+        <div class="mb-3"><label>Certificado:</label><input type="text" name="certificado" class="form-control" required></div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </form>
+</div>
+{% endblock %}
+```
+
+**ver_entrenadores.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<h3>Entrenadores</h3>
+<a href="{% url 'agregar_entrenador' %}" class="btn btn-primary mb-3">Agregar</a>
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr><th>Nombre</th><th>Especialidad</th><th>Email</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        {% for e in entrenadores %}
+        <tr>
+            <td>{{ e.nombre }} {{ e.apellido }}</td>
+            <td>{{ e.especialidad }}</td>
+            <td>{{ e.email }}</td>
+            <td>
+                <a href="{% url 'actualizar_entrenador' e.id %}" class="btn btn-info btn-sm">Editar</a>
+                <a href="{% url 'borrar_entrenador' e.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar?');">Borrar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+```
+
+**actualizar_entrenador.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+    <h3>Actualizar Entrenador</h3>
+    <form action="{% url 'realizar_actualizacion_entrenador' entrenador.id %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3"><label>Nombre:</label><input type="text" name="nombre" value="{{ entrenador.nombre }}" class="form-control"></div>
+        <div class="mb-3"><label>Apellido:</label><input type="text" name="apellido" value="{{ entrenador.apellido }}" class="form-control"></div>
+        <div class="mb-3"><label>Especialidad:</label><input type="text" name="especialidad" value="{{ entrenador.especialidad }}" class="form-control"></div>
+        <div class="mb-3"><label>Teléfono:</label><input type="text" name="telefono" value="{{ entrenador.telefono }}" class="form-control"></div>
+        <div class="mb-3"><label>Email:</label><input type="email" name="email" value="{{ entrenador.email }}" class="form-control"></div>
+        <div class="mb-3"><label>Fecha Contratación:</label><input type="date" name="fecha_contratacion" value="{{ entrenador.fecha_contratacion|date:'Y-m-d' }}" class="form-control"></div>
+        <div class="mb-3"><label>Salario:</label><input type="number" step="0.01" name="salario" value="{{ entrenador.salario|stringformat:'.2f' }}" class="form-control"></div>
+        <div class="mb-3"><label>Certificado:</label><input type="text" name="certificado" value="{{ entrenador.certificado }}" class="form-control"></div>
+        <button type="submit" class="btn btn-warning">Actualizar</button>
+    </form>
+</div>
+{% endblock %}
+```
+
+#### 3.2 Clase (Pasos 38, 39)
+Carpeta: `members/templates/clase/`
+
+**agregar_clase.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+    <h3>Agregar Clase</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3"><label>Nombre Clase:</label><input type="text" name="nombre_clase" class="form-control"></div>
+        <div class="mb-3"><label>Descripción:</label><textarea name="descripcion" class="form-control"></textarea></div>
+        <div class="mb-3"><label>Horario:</label><input type="text" name="horario" class="form-control"></div>
+        <div class="mb-3"><label>Duración (min):</label><input type="number" name="duracion_minutos" class="form-control"></div>
+        <div class="mb-3"><label>Entrenador:</label>
+            <select name="entrenador" class="form-select">
+                {% for e in entrenadores %}
+                <option value="{{ e.id }}">{{ e.nombre }} {{ e.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Cupo Máximo:</label><input type="number" name="cupo_maximo" class="form-control"></div>
+        <div class="mb-3"><label>Costo:</label><input type="number" step="0.01" name="costo_clase" class="form-control"></div>
+        <div class="mb-3"><label>Dificultad:</label><input type="text" name="nivel_dificultad" class="form-control"></div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </form>
+</div>
+{% endblock %}
+```
+
+**ver_clases.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<h3>Clases</h3>
+<a href="{% url 'agregar_clase' %}" class="btn btn-primary mb-3">Agregar</a>
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr><th>Clase</th><th>Horario</th><th>Entrenador</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        {% for c in clases %}
+        <tr>
+            <td>{{ c.nombre_clase }}</td>
+            <td>{{ c.horario }}</td>
+            <td>{{ c.entrenador }}</td>
+            <td>
+                <a href="{% url 'actualizar_clase' c.id %}" class="btn btn-info btn-sm">Editar</a>
+                <a href="{% url 'borrar_clase' c.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar?');">Borrar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+```
+
+**actualizar_clase.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+    <h3>Actualizar Clase</h3>
+    <form action="{% url 'realizar_actualizacion_clase' clase.id %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3"><label>Nombre:</label><input type="text" name="nombre_clase" value="{{ clase.nombre_clase }}" class="form-control"></div>
+        <div class="mb-3"><label>Descripción:</label><textarea name="descripcion" class="form-control">{{ clase.descripcion }}</textarea></div>
+        <div class="mb-3"><label>Horario:</label><input type="text" name="horario" value="{{ clase.horario }}" class="form-control"></div>
+        <div class="mb-3"><label>Duración:</label><input type="number" name="duracion_minutos" value="{{ clase.duracion_minutos }}" class="form-control"></div>
+        <div class="mb-3"><label>Entrenador:</label>
+            <select name="entrenador" class="form-select">
+                {% for e in entrenadores %}
+                <option value="{{ e.id }}" {% if clase.entrenador.id == e.id %}selected{% endif %}>{{ e.nombre }} {{ e.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Cupo:</label><input type="number" name="cupo_maximo" value="{{ clase.cupo_maximo }}" class="form-control"></div>
+        <div class="mb-3"><label>Costo:</label><input type="number" step="0.01" name="costo_clase" value="{{ clase.costo_clase }}" class="form-control"></div>
+        <div class="mb-3"><label>Dificultad:</label><input type="text" name="nivel_dificultad" value="{{ clase.nivel_dificultad }}" class="form-control"></div>
+        <button type="submit" class="btn btn-warning">Actualizar</button>
+    </form>
+</div>
+{% endblock %}
+```
+
+#### 3.3 Reserva Clase (Pasos 44, 45)
+Carpeta: `members/templates/reserva_clase/`
+
+**agregar_reserva_clase.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+    <h3>Nueva Reserva</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3"><label>Socio:</label>
+            <select name="socio" class="form-select">
+                {% for s in socios %}
+                <option value="{{ s.id }}">{{ s.nombre }} {{ s.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Clase:</label>
+            <select name="clase" class="form-select">
+                {% for c in clases %}
+                <option value="{{ c.id }}">{{ c.nombre_clase }} ({{ c.horario }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Estado:</label>
+            <select name="estado_reserva" class="form-select">
+                <option value="Confirmada">Confirmada</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Cancelada">Cancelada</option>
+            </select>
+        </div>
+        <div class="mb-3"><label>Comentarios:</label><textarea name="comentarios" class="form-control"></textarea></div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </form>
+</div>
+{% endblock %}
+```
+
+**ver_reservas_clase.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<h3>Reservas de Clases</h3>
+<a href="{% url 'agregar_reserva_clase' %}" class="btn btn-primary mb-3">Agregar</a>
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr><th>Socio</th><th>Clase</th><th>Estado</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        {% for r in reservas %}
+        <tr>
+            <td>{{ r.socio }}</td>
+            <td>{{ r.clase }}</td>
+            <td>{{ r.estado_reserva }}</td>
+            <td>
+                <a href="{% url 'actualizar_reserva_clase' r.id %}" class="btn btn-info btn-sm">Editar</a>
+                <a href="{% url 'borrar_reserva_clase' r.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar?');">Borrar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+```
+
+**actualizar_reserva_clase.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+    <h3>Actualizar Reserva</h3>
+    <form action="{% url 'realizar_actualizacion_reserva_clase' reserva.id %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3"><label>Socio:</label>
+            <select name="socio" class="form-select">
+                {% for s in socios %}
+                <option value="{{ s.id }}" {% if reserva.socio.id == s.id %}selected{% endif %}>{{ s.nombre }} {{ s.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Clase:</label>
+            <select name="clase" class="form-select">
+                {% for c in clases %}
+                <option value="{{ c.id }}" {% if reserva.clase.id == c.id %}selected{% endif %}>{{ c.nombre_clase }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Estado:</label>
+            <select name="estado_reserva" class="form-select">
+                <option value="Confirmada" {% if reserva.estado_reserva == 'Confirmada' %}selected{% endif %}>Confirmada</option>
+                <option value="Pendiente" {% if reserva.estado_reserva == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                <option value="Cancelada" {% if reserva.estado_reserva == 'Cancelada' %}selected{% endif %}>Cancelada</option>
+            </select>
+        </div>
+        <div class="mb-3"><label>Comentarios:</label><textarea name="comentarios" class="form-control">{{ reserva.comentarios }}</textarea></div>
+        <button type="submit" class="btn btn-warning">Actualizar</button>
+    </form>
+</div>
+{% endblock %}
+```
+
+#### 3.4 Pago (Pasos 50, 51)
+Carpeta: `members/templates/pago/`
+
+**agregar_pago.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+    <h3>Registrar Pago</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3"><label>Socio:</label>
+            <select name="socio" class="form-select">
+                {% for s in socios %}
+                <option value="{{ s.id }}">{{ s.nombre }} {{ s.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Monto:</label><input type="number" step="0.01" name="monto" class="form-control"></div>
+        <div class="mb-3"><label>Método de Pago:</label>
+            <select name="metodo_pago" class="form-select">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Transferencia">Transferencia</option>
+            </select>
+        </div>
+        <div class="mb-3"><label>Concepto:</label><input type="text" name="concepto" class="form-control"></div>
+        <div class="mb-3"><label>Membresía Pagada (Opcional):</label>
+            <select name="membresia_pagada" class="form-select">
+                <option value="">-- Ninguna --</option>
+                {% for m in membresias %}
+                <option value="{{ m.id }}">{{ m.tipo_membresia }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Estado:</label><input type="text" name="estado_pago" value="Pagado" class="form-control"></div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </form>
+</div>
+{% endblock %}
+```
+
+**ver_pagos.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<h3>Pagos Registrados</h3>
+<a href="{% url 'agregar_pago' %}" class="btn btn-primary mb-3">Agregar</a>
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr><th>Socio</th><th>Monto</th><th>Método</th><th>Concepto</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        {% for p in pagos %}
+        <tr>
+            <td>{{ p.socio }}</td>
+            <td>${{ p.monto }}</td>
+            <td>{{ p.metodo_pago }}</td>
+            <td>{{ p.concepto }}</td>
+            <td>
+                <a href="{% url 'actualizar_pago' p.id %}" class="btn btn-info btn-sm">Editar</a>
+                <a href="{% url 'borrar_pago' p.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar?');">Borrar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+```
+
+**actualizar_pago.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+    <h3>Actualizar Pago</h3>
+    <form action="{% url 'realizar_actualizacion_pago' pago.id %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3"><label>Socio:</label>
+            <select name="socio" class="form-select">
+                {% for s in socios %}
+                <option value="{{ s.id }}" {% if pago.socio.id == s.id %}selected{% endif %}>{{ s.nombre }} {{ s.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Monto:</label><input type="number" step="0.01" name="monto" value="{{ pago.monto|stringformat:'.2f' }}" class="form-control"></div>
+        <div class="mb-3"><label>Método de Pago:</label>
+            <select name="metodo_pago" class="form-select">
+                <option value="Efectivo" {% if pago.metodo_pago == 'Efectivo' %}selected{% endif %}>Efectivo</option>
+                <option value="Tarjeta" {% if pago.metodo_pago == 'Tarjeta' %}selected{% endif %}>Tarjeta</option>
+                <option value="Transferencia" {% if pago.metodo_pago == 'Transferencia' %}selected{% endif %}>Transferencia</option>
+            </select>
+        </div>
+        <div class="mb-3"><label>Concepto:</label><input type="text" name="concepto" value="{{ pago.concepto }}" class="form-control"></div>
+        <div class="mb-3"><label>Membresía Pagada:</label>
+            <select name="membresia_pagada" class="form-select">
+                <option value="">-- Ninguna --</option>
+                {% for m in membresias %}
+                <option value="{{ m.id }}" {% if pago.membresia_pagada.id == m.id %}selected{% endif %}>{{ m.tipo_membresia }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Estado:</label><input type="text" name="estado_pago" value="{{ pago.estado_pago }}" class="form-control"></div>
+        <button type="submit" class="btn btn-warning">Actualizar</button>
+    </form>
+</div>
+{% endblock %}
+```
+
+#### 3.5 Rutina Personalizada (Pasos 56, 57)
+Carpeta: `members/templates/rutina_personalizada/`
+
+**agregar_rutina_personalizada.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+    <h3>Crear Rutina Personalizada</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3"><label>Socio:</label>
+            <select name="socio" class="form-select">
+                {% for s in socios %}
+                <option value="{{ s.id }}">{{ s.nombre }} {{ s.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Entrenador Asignado:</label>
+            <select name="entrenador" class="form-select">
+                {% for e in entrenadores %}
+                <option value="{{ e.id }}">{{ e.nombre }} {{ e.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Objetivo:</label><input type="text" name="objetivo" class="form-control"></div>
+        <div class="mb-3"><label>Descripción Ejercicios:</label><textarea name="descripcion_ejercicios" class="form-control" rows="4"></textarea></div>
+        <div class="mb-3"><label>Frecuencia:</label><input type="text" name="frecuencia" class="form-control" placeholder="Ej: 3 veces por semana"></div>
+        <div class="mb-3"><label>Duración (Semanas):</label><input type="number" name="duracion_semanas" class="form-control"></div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </form>
+</div>
+{% endblock %}
+```
+
+**ver_rutinas_personalizadas.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<h3>Rutinas Personalizadas</h3>
+<a href="{% url 'agregar_rutina_personalizada' %}" class="btn btn-primary mb-3">Agregar</a>
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr><th>Socio</th><th>Objetivo</th><th>Entrenador</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        {% for r in rutinas %}
+        <tr>
+            <td>{{ r.socio }}</td>
+            <td>{{ r.objetivo }}</td>
+            <td>{{ r.entrenador }}</td>
+            <td>
+                <a href="{% url 'actualizar_rutina_personalizada' r.id %}" class="btn btn-info btn-sm">Editar</a>
+                <a href="{% url 'borrar_rutina_personalizada' r.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar?');">Borrar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+```
+
+**actualizar_rutina_personalizada.html**
+```html
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+    <h3>Actualizar Rutina</h3>
+    <form action="{% url 'realizar_actualizacion_rutina_personalizada' rutina.id %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3"><label>Socio:</label>
+            <select name="socio" class="form-select">
+                {% for s in socios %}
+                <option value="{{ s.id }}" {% if rutina.socio.id == s.id %}selected{% endif %}>{{ s.nombre }} {{ s.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Entrenador:</label>
+            <select name="entrenador" class="form-select">
+                {% for e in entrenadores %}
+                <option value="{{ e.id }}" {% if rutina.entrenador.id == e.id %}selected{% endif %}>{{ e.nombre }} {{ e.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3"><label>Objetivo:</label><input type="text" name="objetivo" value="{{ rutina.objetivo }}" class="form-control"></div>
+        <div class="mb-3"><label>Ejercicios:</label><textarea name="descripcion_ejercicios" class="form-control" rows="4">{{ rutina.descripcion_ejercicios }}</textarea></div>
+        <div class="mb-3"><label>Frecuencia:</label><input type="text" name="frecuencia" value="{{ rutina.frecuencia }}" class="form-control"></div>
+        <div class="mb-3"><label>Duración (Semanas):</label><input type="number" name="duracion_semanas" value="{{ rutina.duracion_semanas }}" class="form-control"></div>
+        <button type="submit" class="btn btn-warning">Actualizar</button>
+    </form>
+</div>
+{% endblock %}
+```
+
+Con esto, tu proyecto cumple con el requisito de tener todos los módulos funcionales, con su estructura de archivos, vistas sin formularios de Django, y diseño Bootstrap. ¡Asegúrate de que el servidor esté corriendo (`python manage.py runserver 8059`) y verifica cada sección desde el menú de navegación!
 
 ### Parte 7: Ejecución Final
 
