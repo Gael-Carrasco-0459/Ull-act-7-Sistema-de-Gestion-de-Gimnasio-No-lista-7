@@ -1,9 +1,3 @@
-
-He realizado las siguientes adaptaciones para seguir las buenas prácticas de Django:
-1.  **Foreign Keys**: Los campos como `id_socio`, `id_entrenador`, etc., se han convertido en relaciones `ForeignKey`.
-2.  **Opciones**: He añadido opciones (`choices`) para campos como género y estado, lo cual mejora la interfaz de administración.
-3.  **Fechas y Nulos**: Campos como `fecha_cancelacion` permiten valores nulos (`null=True, blank=True`), ya que no siempre tendrán una fecha al momento de crear el registro.
-
 ```bash
 from django.db import models
 
@@ -144,11 +138,3 @@ class RutinaPersonalizada(models.Model):
         verbose_name = "Rutina Personalizada"
         verbose_name_plural = "Rutinas Personalizadas"
 ```
-
-### Notas sobre la implementación:
-
-1.  **Relación Socio - Membresía**: En el modelo `Socio`, he nombrado el campo `membresia` (en lugar de `tipo_membresia`) que es un `ForeignKey`. Django usará el ID internamente para relacionarlos, pero tú puedes acceder al nombre a través de `socio.membresia.tipo_membresia`.
-2.  **Delete Options (`on_delete`)**:
-    *   `models.CASCADE`: Si se borra un Socio, se borran sus Pagos, Reservas y Rutinas (comportamiento estándar).
-    *   `models.SET_NULL`: Si se borra un Entrenador o una Membresía del sistema, no queremos que se borren los Socios o las Clases históricas, por lo que ponemos el campo en `NULL`.
-3.  **Fechas Automáticas**: He añadido `auto_now_add=True` en campos de registro y creación (como `fecha_registro`, `fecha_pago`, `fecha_reserva`) para que Django ponga la fecha/hora actual automáticamente al crear el registro, a menos que quieras introducirla manualmente siempre.
