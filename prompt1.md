@@ -1,15 +1,15 @@
 ```bash
 UIII_Gym_0459/
-├── .venv/                              <-- Entorno Virtual
-├── backend_gimnasio07/                 <-- Configuración del Proyecto
+├── .venv/                              
+├── backend_gimnasio07/                 
 │   ├── __init__.py
 │   ├── asgi.py
-│   ├── settings.py                     <-- Aquí registraste 'members'
-│   ├── urls.py                         <-- Aquí incluiste members.urls
+│   ├── settings.py                     
+│   ├── urls.py                         
 │   └── wsgi.py
-├── members/                            <-- Tu Aplicación
-│   ├── migrations/                     <-- Archivos de migraciones de la BD
-│   ├── templates/                      <-- Carpeta principal de HTMLs
+├── members/                            
+│   ├── migrations/                     
+│   ├── templates/                      
 │   │   ├── clase/
 │   │   │   ├── actualizar_clase.html
 │   │   │   ├── agregar_clase.html
@@ -45,19 +45,19 @@ UIII_Gym_0459/
 │   │   │   ├── agregar_socio.html
 │   │   │   ├── borrar_socio.html
 │   │   │   └── ver_socios.html
-│   │   ├── base.html                   <-- Plantilla madre
-│   │   ├── footer.html                 <-- Pie de página
-│   │   ├── header.html                 <-- Encabezado (Logo/Título)
-│   │   ├── inicio.html                 <-- Página de Bienvenida
-│   │   └── navbar.html                 <-- Menú de navegación
+│   │   ├── base.html                   
+│   │   ├── footer.html                 
+│   │   ├── header.html                 
+│   │   ├── inicio.html                
+│   │   └── navbar.html              
 │   ├── __init__.py
-│   ├── admin.py                        <-- Registro de modelos en panel admin
+│   ├── admin.py                       
 │   ├── apps.py
-│   ├── models.py                       <-- Definición de las 7 tablas
-│   ├── urls.py                         <-- Rutas de la app members
-│   └── views.py                        <-- Lógica (Funciones CRUD)
-├── db.sqlite3                          <-- Base de datos (se crea al migrar)
-└── manage.py                           <-- Ejecutor de comandos
+│   ├── models.py                      
+│   ├── urls.py                         
+│   └── views.py                       
+├── db.sqlite3                         
+└── manage.py                           
 ```
 
 Aquí tienes la guía completa paso a paso para desarrollar el proyecto **Gym Flame** con Django, siguiendo estrictamente tus requerimientos, estructura de carpetas y lógica sin formularios de Django (`forms.py`).
