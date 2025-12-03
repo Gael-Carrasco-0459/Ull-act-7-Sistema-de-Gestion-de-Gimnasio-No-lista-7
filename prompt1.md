@@ -1,32 +1,13 @@
 UIII_Delrio_0459/
-├── .venv/
-├── backend_Delrio/
-│   ├── __init__.py
-│   ├── asgi.py
-│   ├── settings.py
-│   ├── urls.py  <-- Modificado
-│   └── wsgi.py
 ├── app_Delrio/
-│   ├── migrations/
 │   ├── templates/
-│   │   ├── Ventas/
+│   │   ├── Ventas/  <-- ¡Esta es la nueva carpeta!
 │   │   │   ├── agregar_venta.html
 │   │   │   ├── actualizar_venta.html
 │   │   │   ├── borrar_venta.html
 │   │   │   └── ver_venta.html
 │   │   ├── base.html
-│   │   ├── footer.html
-│   │   ├── header.html (no usado directamente en base.html, contenido fusionado)
-│   │   ├── inicio.html
-│   │   └── navbar.html
-│   ├── __init__.py
-│   ├── admin.py  <-- Modificado
-│   ├── apps.py
-│   ├── models.py <-- Modificado
-│   ├── tests.py
-│   ├── urls.py   <-- Creado
-│   └── views.py  <-- Modificado
-└── manage.py
+│   │   ├── ...
 
 
 Aquí tienes la guía completa paso a paso para desarrollar el proyecto **Gym Flame** con Django, siguiendo estrictamente tus requerimientos, estructura de carpetas y lógica sin formularios de Django (`forms.py`).
